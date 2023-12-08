@@ -2,12 +2,12 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import random
 updater = Updater("6348259626:AAGtOuKGB0HmJYVBhH-GoVp8As1jwPPJryA", use_context=True)
 
-def start(update):
+def start(update, context):
     update.message.reply_text(
         "Hello my friend! Welcome to the FunnyBot. Type /help to see available commands."
     )
 
-def help(update):
+def help(update, context):
     update.message.reply_text(
          """Available Commands:
         /links - Get the URLs of SEOULTECH
@@ -15,9 +15,11 @@ def help(update):
         /git - Get the URL of Github
         /joke - Get a random 아재개그
         /youtube - Get Youtube URL
+        /rand <min> <max> - Generate a random number within the specified range
+        /rps - play Rock Paper Scissors game with funnyBot
         """
     )
-def links(update):
+def links(update, context):
     update.message.reply_text(
         """SEOULTECH Homepage URL => https://www.seoultech.ac.kr
         SUIS(통합정보) URL => https://suis.seoultech.ac.kr
@@ -27,15 +29,15 @@ def links(update):
         """
     )
 
-def gmail_url(update):
+def gmail_url(update, context):
     update.message.reply_text(
         "Gmail link here => https://mail.google.com"
     )
 
-def youtube_url(update):
+def youtube_url(update, context):
     update.message.reply_text("YouTube Link => https://www.youtube.com/")
 
-def git_url(update):
+def git_url(update, context):
     update.message.reply_text("Github Link => https://github.com")
 
 def get_random_joke():
@@ -61,14 +63,52 @@ def get_random_joke():
     ]
     return random.choice(jokes)
 
-def joke(update):
+def joke(update, context):
     update.message.reply_text(get_random_joke())
 
+def random_number_generator(update, context):
+    try:
+        if len(context.args) != 2:
+            raise ValueError("Invalid command format. Use /random_number <min> <max>")
 
-def unknown(update):
+        min_value, max_value = map(int, context.args)
+        if min_value >= max_value:
+            raise ValueError("Minimum value must be less than the maximum value")
+
+        random_number = random.randint(min_value, max_value)
+        update.message.reply_text(f"Random number: {random_number}")
+    except ValueError as e:
+        update.message.reply_text(str(e))
+
+def play_rps(update, context):
+    if not context.args:
+        update.message.reply_text("Please choose one: /rps rock|paper|scissors")
+        return
+
+    user_choice = context.args[0].lower()
+    bot_choice = random.choice(['rock', 'paper', 'scissors'])
+
+    result = determine_winner(user_choice, bot_choice)
+
+    reply_message = f"You chose {user_choice}, and the bot chose {bot_choice}.\nResult: {result}"
+    update.message.reply_text(reply_message)
+
+def determine_winner(player_choice, bot_choice):
+    if player_choice == bot_choice:
+        return "It's a tie!"
+    elif (
+        (player_choice == 'rock' and bot_choice == 'scissors') or
+        (player_choice == 'scissors' and bot_choice == 'paper') or
+        (player_choice == 'paper' and bot_choice == 'rock')
+    ):
+        return "You win!"
+    else:
+        return "You lose!"
+
+def unknown(update, context):
     update.message.reply_text(f"Sorry '{update.message.text}' is not a valid command")
 
-def unknown_text(update):
+def unknown_text(update, context):
     update.message.reply_text(f"Sorry, I can't recognize your input: '{update.message.text}'")
 
 
@@ -79,6 +119,8 @@ updater.dispatcher.add_handler(CommandHandler('gmail', gmail_url))
 updater.dispatcher.add_handler(CommandHandler('git', git_url))
 updater.dispatcher.add_handler(CommandHandler('youtube', youtube_url))
 updater.dispatcher.add_handler(CommandHandler('joke', joke))
+updater.dispatcher.add_handler(CommandHandler('rand', random_number_generator))
+updater.dispatcher.add_handler(CommandHandler('rps', play_rps))
 updater.dispatcher.add_handler(MessageHandler(Filters.text, unknown))
 updater.dispatcher.add_handler(MessageHandler(Filters.command, unknown))
 updater.start_polling()
