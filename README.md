@@ -8,6 +8,10 @@
 
 This Python script utilizes the `python-telegram-bot==13.7` (in VScode: pip install python-telegram-bot==13.7) library to create a Telegram bot named FunnyBot. The bot responds to various commands and provides information, jokes, and games.
 
+## How to use
+
+You can run the program with my own TOKEN or change for yours, and search in Telegram `FunnyBot` or `QuipQuoterBot`. 
+
 ## Commands
 
 - `/start`: Welcomes the user to the FunnyBot.
