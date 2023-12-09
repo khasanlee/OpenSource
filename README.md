@@ -6,7 +6,7 @@
   
 # Telegram Bot Explanation
 
-This Python script utilizes the `python-telegram-bot` library to create a Telegram bot named FunnyBot. The bot responds to various commands and provides information, jokes, and games.
+This Python script utilizes the `python-telegram-bot==13.7` (in VScode: pip install python-telegram-bot==13.7) library to create a Telegram bot named FunnyBot. The bot responds to various commands and provides information, jokes, and games.
 
 ## Commands
 
